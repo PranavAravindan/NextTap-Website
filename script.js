@@ -57,10 +57,11 @@ function reset(){n=0;ai=0;cur=null;chat.textContent='';$('#note').textContent=S(
 function openChat(){say(t('ask'));chat.lastChild.append(btn(S().task[lang],()=>{say(S().task[lang],'u');const d=say(t('consent'));d.append(btn(t('yes'),()=>step(0)))}))}
 function mark(el){const r=el.getBoundingClientRect(),o=stage.getBoundingClientRect();$$('.ring,.tag').forEach(x=>x.remove());
  const g=document.createElement('div');g.className='ring';Object.assign(g.style,{left:r.left-o.left-6+'px',top:r.top-o.top-6+'px',width:r.width+12+'px',height:r.height+12+'px'});
- const a=document.createElement('div');a.className='tag';a.textContent=t('tap');stage.append(g,a);a.style.left=Math.max(6,r.left-o.left+r.width/2-a.offsetWidth/2)+'px';a.style.top=Math.max(4,r.top-o.top-62)+'px'}
+ const a=document.createElement('div');a.className='tag';a.textContent=t('tap');stage.append(g,a);const w=a.offsetWidth,h=a.offsetHeight,below=r.bottom-o.top+36+h<=o.height;a.className='tag '+(below?'below':'above');
+ a.style.left=Math.min(Math.max(6,r.left-o.left+r.width/2-w/2),o.width-w-6)+'px';a.style.top=(below?r.bottom-o.top+36:Math.max(4,r.top-o.top-36-h))+'px'}
 function step(i){n=i;const s=S().steps[i];if(!s){cur=null;$$('.ring,.tag').forEach(x=>x.remove());const last=S().steps[S().steps.length-1];stage.innerHTML=S().screens.done;say(S().ok[lang],'ok');meter(1);return}
  cur=s;stage.innerHTML=s.s==='home'?S().home:S().screens[s.s];if(mode==='ext')ai++;
- const nxt=stage.querySelector(`[data-t="${s.t}"]`);if(nxt)mark(nxt);say(s[lang],'',s.term);meter()}
+ say(s[lang],'',s.term);meter();const nxt=stage.querySelector(`[data-t="${s.t}"]`);if(nxt)mark(nxt)}
 stage.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.fab)return void openChat();if(!cur)return;
  if(b.dataset.t===cur.t)step(n+1);else say(b.dataset.offer&&cur.offer?cur.offer[lang]:t('wrong'))};
 $$('.tabs button').forEach(b=>b.onclick=()=>{$$('.tabs button').forEach(x=>x.classList.toggle('on',x===b));mode=b.dataset.m;reset()});
@@ -68,6 +69,8 @@ $('#lang').onclick=()=>{lang=lang==='en'?'es':'en';reset()};$('#restart').onclic
 
 const PH=['Toque aquí','点这里','Nhấn vào đây','اضغط هنا','यहाँ टैप करें','Appuyez ici','Tippen Sie hier','Нажмите здесь','여기를 누르세요','ここをタップ','Clique aqui','Pindutin dito','Peze isit la','Buraya dokunun','Dotknij tutaj','Tocca qui','Tryck här','Gonga hapa','Tap here'];
 $('#mq').innerHTML=[...PH,...PH].map(p=>`<span class="pill" dir="auto">${p}</span>`).join('');
+
+addEventListener('resize',()=>{if(!cur)return;const e=stage.querySelector(`[data-t="${cur.t}"]`);if(e)mark(e)});
 document.getElementById("pilotBtn").addEventListener("click", function (e) {
     e.preventDefault();
 
