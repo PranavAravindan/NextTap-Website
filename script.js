@@ -9,7 +9,15 @@ const so=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return
 $$('.step').forEach(s=>so.observe(s));
 /* ---------- partner ROI calculator (the plan's example, adjustable) ---------- */
 const usd=n=>n>=1e6?'$'+(n/1e6).toFixed(2)+'M':'$'+Math.round(n/1e3)+'K';
-function roi(){const c=+$('#c1').value,p=+$('#c2').value/100,k=+$('#c3').value,s=+$('#c4').value/100,av=c*p,sv=av*k;
+/* exponential slider: position 0-1000 -> contacts 0-5,000,000 */
+const MAXC=5e6,K=10;
+function sliderToVal(x){
+  const v=MAXC*(Math.exp(K*x/1000)-1)/(Math.exp(K)-1);
+  if(v<=0)return 0;
+  const step=Math.max(50,Math.pow(10,Math.floor(Math.log10(v)))/20); // step scales with the number
+  return Math.min(MAXC,Math.round(v/step)*step);
+}
+function roi(){const c=sliderToVal(+$('#c1').value),p=+$('#c2').value/100,k=+$('#c3').value,s=+$('#c4').value/100,av=c*p,sv=av*k;
 $('#v1').textContent=c.toLocaleString();$('#v2').textContent=(p*100)+'%';$('#v3').textContent='$'+k.toFixed(2);$('#v4').textContent=(s*100)+'%';
 $('#o1').textContent=Math.round(av).toLocaleString();$('#o2').textContent=usd(sv);$('#o3').textContent=usd(sv*s);$('#o4').textContent=usd(sv*(1-s))}
 ['#c1','#c2','#c3','#c4'].forEach(i=>$(i).oninput=roi);roi();
