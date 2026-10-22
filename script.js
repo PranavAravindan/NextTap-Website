@@ -18,7 +18,7 @@ function sliderToVal(x){
   return Math.min(MAXC,Math.round(v/step)*step);
 }
 function roi(){const c=sliderToVal(+$('#c1').value),p=+$('#c2').value/100,k=+$('#c3').value,s=+$('#c4').value/100,av=c*p,sv=av*k;
-$('#v1').textContent=c.toLocaleString();$('#v2').textContent=(p*100)+'%';$('#v3').textContent='$'+k.toFixed(2);$('#v4').textContent=(s*100)+'%';
+$('#v1').textContent=c.toLocaleString();$('#v2').textContent = Math.round(p * 100) + '%';;$('#v3').textContent='$'+k.toFixed(2);$('#v4').textContent = Math.round(s * 100) + '%';;
 $('#o1').textContent=Math.round(av).toLocaleString();$('#o2').textContent=usd(sv);$('#o3').textContent=usd(sv*s);$('#o4').textContent=usd(sv*(1-s))}
 ['#c1','#c2','#c3','#c4'].forEach(i=>$(i).oninput=roi);roi();
 /* ---------- live demo: one engine, two ways in ---------- */
